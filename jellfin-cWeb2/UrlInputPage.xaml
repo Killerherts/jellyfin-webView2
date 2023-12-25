@@ -11,24 +11,24 @@
     <Grid Background="{StaticResource Color0}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Background="{StaticResource Color10}">
-            <Image x:Name="logo" Source="/Assets/OnBoardingLogo.png" Stretch="Uniform" HorizontalAlignment="Center" Height="80" Margin="10" />
+            <Image x:Name="logo" Source="/Assets/OnBoardingLogo.png" Stretch="Uniform" HorizontalAlignment="Center" Height="80" />
         </Grid>
         <Grid Grid.Row="1">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock x:Name="TxtTitle" Text="Enter your Jellyfin Server URL" Foreground="{StaticResource Color100}" FontSize="20"  FontFamily="{StaticResource JellyfinFamilyFont}" HorizontalAlignment="Center"/>
             <TextBox x:Name="UrlInputBox" Style="{StaticResource PrimaryTextBox}" Foreground="{StaticResource Color10}" FontSize="{StaticResource FontL}" 
                          PlaceholderText="http://example.com or 192.168.100.102:8086" KeyDown="UrlInputBox_KeyDown"/>
-                <Button x:Name="BtnConnect" Content="Connect" Click="SubmitButton_Click" Margin="7" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}"/>
-                <Button x:Name="BtnConfirm" Content="Confirm Connection" Click="ConfirmButton_Click" Style="{StaticResource PrimaryButton}" Visibility="Collapsed"/>
+                <Button x:Name="BtnConnect" Content="Connect" Click="SubmitButton_Click" Margin="4" HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}"/>
+                <Button x:Name="BtnConfirm" Content="Confirm Connection" Height="40" Click="ConfirmButton_Click" Style="{StaticResource PrimaryButton}" Visibility="Collapsed"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="2" Padding="10">
-            <TextBlock x:Name="TxtError" Text="Error" Visibility="Collapsed" Foreground="Red" FontFamily="{StaticResource JellyfinFamilyFont}" Padding="10" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+            <TextBlock x:Name="TxtError" Text="Error" Visibility="Collapsed" Foreground="Red" FontFamily="{StaticResource JellyfinFamilyFont}" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextWrapping="Wrap"/>
         </Grid>
     </Grid>
 </Page>
