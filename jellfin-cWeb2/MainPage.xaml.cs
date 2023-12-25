@@ -4,8 +4,9 @@ using Windows.Gaming.Input;
 using Windows.UI.Core;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Navigation;
 
-namespace jellfin_cWeb2
+namespace jellyfin_cWeb2
 {
     public sealed partial class MainPage : Page
     {
@@ -13,10 +14,20 @@ namespace jellfin_cWeb2
 
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
             Gamepad.GamepadAdded += Gamepad_GamepadAdded;
             Gamepad.GamepadRemoved += Gamepad_GamepadRemoved;
             Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.Parameter is string url)
+            {
+                WebView2.Source = new Uri(url);
+            }
         }
 
         private void Gamepad_GamepadAdded(object sender, Gamepad e)

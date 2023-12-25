@@ -5,6 +5,18 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jellfin-cWeb2", "jellfin-cWeb2\jellfin-cWeb2.csproj", "{A469E82E-1775-4C4A-B6F2-259144C89792}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{2B0C65C2-8E06-4ABE-A600-A425E9844D70}"
+	ProjectSection(SolutionItems) = preProject
+		..\jellyfin-uwp\Jellyfin\Fonts\NotoSans-Regular.ttf = ..\jellyfin-uwp\Jellyfin\Fonts\NotoSans-Regular.ttf
+		..\jellyfin-uwp\Jellyfin\Fonts\Quicksand-Regular.ttf = ..\jellyfin-uwp\Jellyfin\Fonts\Quicksand-Regular.ttf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{A0E15AAE-D4A8-490B-9A7F-7A75638CB8B9}"
+	ProjectSection(SolutionItems) = preProject
+		..\jellyfin-uwp\Jellyfin\Utils\AppUtils.cs = ..\jellyfin-uwp\Jellyfin\Utils\AppUtils.cs
+		..\jellyfin-uwp\Jellyfin\Utils\DeviceFormFactorType.cs = ..\jellyfin-uwp\Jellyfin\Utils\DeviceFormFactorType.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
