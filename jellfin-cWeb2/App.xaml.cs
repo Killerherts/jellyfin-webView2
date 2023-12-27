@@ -37,7 +37,7 @@ namespace jellfin_cWeb2
             if (e.PrelaunchActivated == false)
             {
                 var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                bool enableDebug = true;
+                bool enableDebug = false;
                 if (enableDebug)
                 {
                     rootFrame.Navigate(typeof(UrlInputPage));
