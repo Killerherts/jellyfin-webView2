@@ -1,5 +1,5 @@
 ﻿<Application
-    x:Class="jellfin_cWeb2.App"
+    x:Class="jellyfin_cWeb2.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 

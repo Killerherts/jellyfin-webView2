@@ -1,13 +1,11 @@
-﻿using jellyfin_cWeb2;
-using System;
+﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace jellfin_cWeb2
+namespace jellyfin_cWeb2
 {
     sealed partial class App : Application
     {
@@ -37,7 +35,7 @@ namespace jellfin_cWeb2
             if (e.PrelaunchActivated == false)
             {
                 var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                bool enableDebug = false;
+                bool enableDebug = true;
                 if (enableDebug)
                 {
                     rootFrame.Navigate(typeof(UrlInputPage));

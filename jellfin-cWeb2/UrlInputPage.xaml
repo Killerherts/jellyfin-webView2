@@ -11,6 +11,7 @@
     <Grid Background="{StaticResource Color0}">
 
         <Grid.RowDefinitions>
+
             <RowDefinition/>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
