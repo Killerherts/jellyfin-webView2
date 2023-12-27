@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,41 +28,55 @@ namespace jellyfin_cWeb2
             TxtError.Visibility = Visibility.Collapsed;
             BtnConfirm.Visibility = Visibility.Collapsed;
 
-            _uriString = UrlInputBox.Text;
+            _uriString = UrlInputBox.Text.Trim(); // Trim to remove any leading/trailing whitespaces
 
-            // Append http:// if no scheme is provided
-            if (!_uriString.StartsWith("http://") && !_uriString.StartsWith("https://"))
-            {
-                _uriString = "http://" + _uriString;
-            }
+            bool isValid = await NormalizeAndCheckUri(_uriString);
+            BtnConnect.IsEnabled = true; // Re-enable the button after the check is complete
 
-            try
+            if (!isValid)
             {
-                var ub = new UriBuilder(_uriString);
-                _uriString = ub.Uri.AbsoluteUri; // Update uriString with the corrected URI
-            }
-            catch (Exception ex)
-            {
-                UpdateErrorUI($" {ex.Message}");
-                BtnConnect.IsEnabled = true;
-                return;
-            }
-
-            // Check if the URL is valid
-            if (!await CheckURLValidAsync(_uriString))
-            {
-                // Show confirm button and prompt user for confirmation
                 BtnConfirm.Visibility = Visibility.Visible;
-                UpdateErrorUI( _uriString + " is accessible, but jellyfin instance verification failed. Please confirm if this is the correct URL. Incorrect url will require clearing app storage");
+                // The error message should already be set within NormalizeAndCheckUri method
             }
             else
             {
-                // URL is valid, proceed further
                 ProceedWithValidURL(_uriString);
             }
-
-            BtnConnect.IsEnabled = true;
         }
+
+        private async Task<bool> NormalizeAndCheckUri(string uriInput)
+        {
+            UriBuilder uriBuilder;
+
+            // Attempt to normalize URL with https first.
+            try
+            {
+                uriBuilder = new UriBuilder(uriInput)
+                {
+                    Scheme = Uri.UriSchemeHttps,
+                    Port = -1 // -1 indicates that the default port for the scheme should be used.
+                };
+            }
+            catch (Exception ex)
+            {
+                UpdateErrorUI($"Invalid URL format: {ex.Message}");
+                return false;
+            }
+
+            // Try connecting with https first.
+            _uriString = uriBuilder.Uri.AbsoluteUri;
+            if (await CheckURLValidAsync(_uriString))
+            {
+                return true;
+            }
+
+            // If https fails, try with http.
+            uriBuilder.Scheme = Uri.UriSchemeHttp;
+            _uriString = uriBuilder.Uri.AbsoluteUri;
+            return await CheckURLValidAsync(_uriString);
+        }
+
+
 
         private void UrlInputBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -86,43 +101,73 @@ namespace jellyfin_cWeb2
                 return false;
             }
 
-            // First attempt to connect with the original URI
+            // First attempt to connect with the URI provided
             HttpWebResponse response = await AttemptConnection(testUri);
-            if (response == null)
+            if (response != null && response.StatusCode == HttpStatusCode.OK)
             {
-                // If connection failed, try with the alternate scheme
-                string alternateScheme = testUri.Scheme == Uri.UriSchemeHttp ? Uri.UriSchemeHttps : Uri.UriSchemeHttp;
-                var alternateUri = new UriBuilder(testUri) { Scheme = alternateScheme }.Uri;
-                response = await AttemptConnection(alternateUri);
+                // We have a successful https connection, no need to try http.
+                bool isValidContent = await ValidateResponseContent(response);
+                response.Dispose(); // Always dispose of the response object when done.
+                return isValidContent;
+            }
+            else if (testUri.Scheme == Uri.UriSchemeHttps)
+            {
+                // The https attempt failed, now try with http if the original scheme was https
+                string httpUri = uriString.Replace(Uri.UriSchemeHttps, Uri.UriSchemeHttp);
+                response = await AttemptConnection(new Uri(httpUri));
+                if (response != null && response.StatusCode == HttpStatusCode.OK)
+                {
+                    bool isValidContent = await ValidateResponseContent(response);
+                    response.Dispose(); // Always dispose of the response object when done.
+                    return isValidContent;
+                }
             }
 
-            if (response == null)
-            {
-                UpdateErrorUI("Unable to connect to the URL.");
-                return false;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                UpdateErrorUI($"Server responded with status code: {response.StatusCode}");
-                return false;
-            }
-
-            return await ValidateResponseContent(response);
+            // If we reach here, both https and http have failed
+            UpdateErrorUI("Unable to connect to the server with both https and http.");
+            response?.Dispose(); // Dispose if not null
+            return false;
         }
+
 
         private async Task<HttpWebResponse> AttemptConnection(Uri uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Timeout = 10000; // Set a timeout period (10 seconds, for example).
             try
             {
                 return (HttpWebResponse)(await request.GetResponseAsync());
             }
-            catch (Exception)
+            catch (WebException ex)
             {
-                return null; // Connection failed
+                if (ex.Response is HttpWebResponse response)
+                {
+                    return response; // Return the response for further status code checks
+                }
+                // Handle specific WebException scenarios or log for debugging
+                // For example: ex.Status == WebExceptionStatus.NameResolutionFailure means DNS resolution failed
+                return null; // Connection failed for a reason other than an HTTP response
+            }
+            catch (SocketException ex)
+            {
+                // Handle network layer errors.
+                // Log the error message: ex.Message
+                return null;
+            }
+            catch (TimeoutException ex)
+            {
+                // Handle timeout.
+                // Log the error message: ex.Message
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // Handle other types of exceptions.
+                // Log the error message: ex.Message
+                return null;
             }
         }
+
 
         private async Task<bool> ValidateResponseContent(HttpWebResponse response)
         {
@@ -151,7 +196,7 @@ namespace jellyfin_cWeb2
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["savedUrl"] = url; // Save the URL
-            Frame.Navigate(typeof(MainPage), url); // Navigate to MainPage with the new URL
+            Frame.Navigate(typeof(jellfin_cWeb2.MainPage), url); // Navigate to MainPage with the new URL
         }
 
     }

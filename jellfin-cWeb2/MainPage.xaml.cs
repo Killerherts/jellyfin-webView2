@@ -68,6 +68,21 @@ namespace jellyfin_cWeb2
                     });
                 }
 
+                if (reading.Buttons.HasFlag(GamepadButtons.DPadUp))
+                {
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                    {
+                        await WebView2.ExecuteScriptAsync("navigateFocusableElements('prev');");
+                    });
+                }
+                else if (reading.Buttons.HasFlag(GamepadButtons.DPadDown))
+                {
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                    {
+                        await WebView2.ExecuteScriptAsync("navigateFocusableElements('next');");
+                    });
+                }
+
                 await Task.Delay(100); // Delay to prevent rapid firing
             }
         }
