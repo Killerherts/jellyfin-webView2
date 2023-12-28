@@ -196,7 +196,7 @@ namespace jellyfin_cWeb2
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["savedUrl"] = url; // Save the URL
-            Frame.Navigate(typeof(jellfin_cWeb2.MainPage), url); // Navigate to MainPage with the new URL
+            Frame.Navigate(typeof(jellyfin_cWeb2.MainPage), url); // Navigate to MainPage with the new URL
         }
 
     }
