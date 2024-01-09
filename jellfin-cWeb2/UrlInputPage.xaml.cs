@@ -53,9 +53,13 @@ namespace jellyfin_cWeb2
             {
                 uriBuilder = new UriBuilder(uriInput)
                 {
-                    Scheme = Uri.UriSchemeHttps,
-                    Port = -1 // -1 indicates that the default port for the scheme should be used.
+                    Scheme = Uri.UriSchemeHttps
                 };
+                if (uriBuilder.Port.Equals(80))
+                {
+                    uriBuilder.Port = -1; // -1 indicates that the default port for the scheme should be used.
+
+                }
             }
             catch (Exception ex)
             {
@@ -73,7 +77,12 @@ namespace jellyfin_cWeb2
             // If https fails, try with http.
             uriBuilder.Scheme = Uri.UriSchemeHttp;
             _uriString = uriBuilder.Uri.AbsoluteUri;
-            return await CheckURLValidAsync(_uriString);
+            if (await CheckURLValidAsync(_uriString))
+            {
+                return true;
+            }
+            UpdateErrorUI("Unable to connect to the server with both https and http.");
+            return false;
         }
 
 
@@ -110,21 +119,8 @@ namespace jellyfin_cWeb2
                 response.Dispose(); // Always dispose of the response object when done.
                 return isValidContent;
             }
-            else if (testUri.Scheme == Uri.UriSchemeHttps)
-            {
-                // The https attempt failed, now try with http if the original scheme was https
-                string httpUri = uriString.Replace(Uri.UriSchemeHttps, Uri.UriSchemeHttp);
-                response = await AttemptConnection(new Uri(httpUri));
-                if (response != null && response.StatusCode == HttpStatusCode.OK)
-                {
-                    bool isValidContent = await ValidateResponseContent(response);
-                    response.Dispose(); // Always dispose of the response object when done.
-                    return isValidContent;
-                }
-            }
 
             // If we reach here, both https and http have failed
-            UpdateErrorUI("Unable to connect to the server with both https and http.");
             response?.Dispose(); // Dispose if not null
             return false;
         }
