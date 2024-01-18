@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Jellyfin.Utils;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.ViewManagement;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -23,6 +26,20 @@ namespace jellyfin_cWeb2
             {
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
+
+                if (AppUtils.IsXbox)
+                {
+                    ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+                    ApplicationViewScaling.TrySetDisableLayoutScaling(true);
+                }
+                else
+                {
+                    ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+                    formattableTitleBar.ButtonBackgroundColor = Color.FromArgb(255, 32, 32, 32);
+                    formattableTitleBar.ButtonForegroundColor = Color.FromArgb(255, 160, 160, 160);
+                    formattableTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                    formattableTitleBar.BackgroundColor = Color.FromArgb(255, 32, 32, 32);
+                }
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

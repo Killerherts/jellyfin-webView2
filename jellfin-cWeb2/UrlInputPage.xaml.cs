@@ -20,6 +20,12 @@ namespace jellyfin_cWeb2
         public UrlInputPage()
         {
             this.InitializeComponent();
+            this.Loaded += UrlInputPage_Loaded;
+        }
+
+        private void UrlInputPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            UrlInputBox.Focus(FocusState.Programmatic);
         }
 
         private async void SubmitButton_Click(object sender, RoutedEventArgs e)
