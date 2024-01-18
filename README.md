@@ -1,7 +1,7 @@
-# README for jellyfin_cWeb2
+# README for jellyfin_webView2
 
 ## About
-`jellyfin_cWeb2` is a Windows application designed for connecting to Jellyfin media servers. It enables users to input and validate the server URL, facilitating a seamless connection to their Jellyfin server for media access and management.
+`jellyfin_webView2` is a Windows application designed for connecting to Jellyfin media servers. It enables users to input and validate the server URL, facilitating a seamless connection to their Jellyfin server for media access and management.
 
 ## Features
 - **URL Input and Validation:** Users can input the URL of their Jellyfin server, which is then validated for both HTTPS and HTTP connections.
